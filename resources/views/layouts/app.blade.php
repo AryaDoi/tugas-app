@@ -62,7 +62,7 @@
     <!-- Footer -->
     <footer class="text-center py-3 mt-4">
         <div class="container">
-            <p class="mb-0">© 2025 Movie App. All rights reserved.</p>
+            <p class="mb-0">© 2025 Movie App. Punya Arya.</p>
         </div>
     </footer>
 
