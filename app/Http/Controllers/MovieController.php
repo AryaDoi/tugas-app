@@ -17,7 +17,7 @@ class MovieController extends Controller
             $movie->poster = $movie->poster ?: 'https://picsum.photos/200';
             return $movie;
         });
-    
+
         return view('movies.index', compact('movies'));
     }
 
@@ -43,10 +43,8 @@ class MovieController extends Controller
             'synopsis' => 'required|string',
         ]);
 
-        // Simpan data ke database
         Movie::create($validatedData);
 
-        // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('movies.index')->with('success', 'Movie added successfully!');
     }
 
@@ -55,16 +53,13 @@ class MovieController extends Controller
      */
     public function show(string $id)
     {
-      // Ambil data film berdasarkan ID
-      $movie = Movie::find($id);
+        $movie = Movie::find($id);
 
-      // Periksa apakah film ditemukan
-      if (!$movie) {
-          return redirect()->route('movies.index')->with('error', 'Movie not found.');
-      }
-  
-      // Kirim data ke view menggunakan compact
-      return view('movies.show', compact('movie'));
+        if (!$movie) {
+            return redirect()->route('movies.index')->with('error', 'Movie not found.');
+        }
+
+        return view('movies.show', compact('movie'));
     }
 
     /**
@@ -72,22 +67,58 @@ class MovieController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $movie = Movie::findOrFail($id);
+        $genres = Genre::all();
+    
+        return view('movies.edit', compact('movie', 'genres'));
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'genre_id' => 'required|exists:genres,id',
+            'year' => 'required|integer|min:1900|max:' . date('Y'),
+            'available' => 'required|boolean',
+            'poster' => 'nullable|image|max:2048', 
+        ]);
+    
+        $movie = Movie::findOrFail($id);
+        $movie->title = $request->input('title');
+        $movie->genre_id = $request->input('genre_id');
+        $movie->year = $request->input('year');
+        $movie->available = $request->input('available');
+    
+        if ($request->hasFile('poster')) {
+            $posterPath = $request->file('poster')->store('posters', 'public');
+            $movie->poster = 'storage/testing' . $posterPath;
+        }
+    
+        $movie->save();
+    
+        return redirect()->route('movies.index')->with('success', 'Movie updated successfully!');
+    
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $movie = Movie::find($id);
+
+        if (!$movie) {
+            return redirect()->route('movies.index')->with('error', 'Movie not found.');
+        }
+
+        $movie->delete();
+
+        return redirect()->route('movies.index')->with('success', 'Movie deleted successfully!');
     }
 }

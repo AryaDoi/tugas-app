@@ -28,6 +28,12 @@
                 <td>{{ $movie->available ? 'Yes' : 'No' }}</td>
                 <td>
                     <a href="{{ route('movies.show', $movie->id) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ route('movies.edit', $movie->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ route('movies.destroy', $movie->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this movie?')">Delete</button>
+                    </form>
                 </td>
             </tr>
             @endforeach

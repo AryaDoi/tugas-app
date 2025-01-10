@@ -19,3 +19,5 @@ Route::resource('movies', MovieController::class);
 Route::resource('genres', GenreController::class);
 Route::post('/movies', [MovieController::class, 'store'])->name('movies.store');
 Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
+Route::get('/movies/{movie}/edit', [MovieController::class, 'edit'])->name('movies.edit');
+Route::put('/movies/{movie}', [MovieController::class, 'update'])->name('movies.update');
